@@ -1,0 +1,2 @@
+Temperatur: 6°C
+Windrichtung: (360°)

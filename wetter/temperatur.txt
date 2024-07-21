@@ -1,0 +1,6 @@
+Temperatur: 26.50°C
+Temperatur: 27.50°C
+Temperatur: 28.50°C
+Temperatur: 29.50°C
+Temperatur: 21.50°C
+Temperatur: 22.50°C

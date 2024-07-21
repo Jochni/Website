@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daten Anzeigen</title>
+</head>
+<body>
+    <table id="datenTable">
+        <!-- Tabelle wird hier gefüllt -->
+    </table>
+
+    <script>
+        fetch('daten.txt')
+            .then(response => response.text())
+            .then(data => {
+                // Teilen Sie die Daten in Zeilen
+                let lines = data.split('\n');
+                let table = document.getElementById('datenTable');
+
+                // Durchlaufen Sie jede Zeile
+                for(let line of lines) {
+                    // Teilen Sie die Zeile in Schlüssel und Wert
+                    let [key, value] = line.split(':');
+
+                    // Erstellen Sie eine neue Zeile und Zellen für den Schlüssel und den Wert
+                    let row = document.createElement('tr');
+                    let keyCell = document.createElement('td');
+                    let valueCell = document.createElement('td');
+
+                    // Setzen Sie den Text der Zellen und fügen Sie sie der Zeile hinzu
+                    keyCell.textContent = key;
+                    valueCell.textContent = value;
+                    row.appendChild(keyCell);
+                    row.appendChild(valueCell);
+
+                    // Fügen Sie die Zeile der Tabelle hinzu
+                    table.appendChild(row);
+                }
+            });
+    </script>
+</body>
+</html>

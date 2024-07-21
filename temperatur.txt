@@ -1,0 +1,2 @@
+Temperatur: 26.20°C
+Temperatur: 26.30°C

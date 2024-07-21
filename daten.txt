@@ -1,0 +1,2 @@
+Temperatur: 26.40°C
+Luftfeuchtigkeit: 44.30%

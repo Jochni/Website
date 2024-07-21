@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wetterdaten</title>
+</head>
+<body>
+    <h1>Aktuelle Wetterdaten</h1>
+    <p>Temperatur: <span id="temperature">6°C</span></p>
+    <p>Windrichtung: <span id="windDirection">N (360°)</span></p>
+    
+
+    <script>
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 10000) // 10 seconds
+
+    fetch('wetterdaten.txt', { signal: controller.signal })
+        .then(response => response.text())
+        .then(data => {
+        clearTimeout(timeout)
+        const temperature = data.match(/Temperatur: (-?\d+°C)/)[1]
+        const windDirection = data.match(/Windrichtung: ([A-Z]+) \(\d+°\)/)[1]
+        document.getElementById('temperature').textContent = temperature
+        document.getElementById('windDirection').textContent = windDirection
+     })
+    .catch(error => {
+        console.error('Fehler beim Laden der Wetterdaten:', error)
+        document.getElementById('temperature').textContent = 'Fehler'
+        document.getElementById('windDirection').textContent = 'Fehler'
+    })
+    </script>
+</body>
+</html>
