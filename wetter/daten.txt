@@ -1,2 +1,1 @@
-Temperatur: 26.50°C
-Luftfeuchtigkeit: 42.70%
+2,24.8,60.9
