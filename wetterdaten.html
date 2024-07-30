@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hintergrundbilder für denn PC</title>
+    <title>Wetter</title>
     <style>
-           .navbar img {
+        .navbar img {
             height: 50px;
             float: left;
         }
@@ -36,26 +37,58 @@
         }
     </style>
 </head>
-<body style="background-color:powderblue;">
+<body>
 
     <div class="navbar">
         <img src="img/bild3.png" alt="Logo" >
         <a href="index.html">Home</a>
-        <a href="news.html">News</a>
+        <a href="wetter/daten.html">Wetter</a>
         <a href="HintergrundbilderFürPC.html">Hintergrundbilder für den PC</a>
     </div>
 
-    <h2>Hintergrundbilder</h2>
-    1. 
-    <img src="img/bild2.png"  width="400" height="400" >
+    <img src="wetter/daten.png" alt="Wetter" >
     
-
-    2. 
-    <img src="img/bild1.png"  width="400" height="400" >
-
-
+    <p id="temperatur"></p>
+<p id="feuchtigkeit"></p>
+<p id="zeit"></p>
 
 
-    <a href="index.html">Zurück</a>
+<script>
+fetch('wetter/daten.txt')
+.then(response => response.text())
+.then(data => {
+    let daten = data.split(',');
+    document.getElementById('temperatur').textContent = 'Temperatur: ' + daten[1] + ' Grad';
+    document.getElementById('feuchtigkeit').textContent = 'Feuchtigkeit: ' + daten[2] + ' %';
+})
+.catch(error => console.error(error));
+</script>
+<script>
+fetch('wetter/zeit.txt')
+.then(response => response.text())
+.then(data => {
+    let daten = data.split(',');
+    document.getElementById('zeit').textContent = 'Zeit: ' + daten[0] + ' ';
+    
+})
+.catch(error => console.error(error));
+</script>
+<script>
+    
+const bild = document.getElementById('bild');
+
+
+function aktualisiereBild() {
+  
+  const bildUrl = 'bild.jpg?' + new Date().getTime();
+  bild.src = bildUrl;
+}
+
+
+setInterval(aktualisiereBild, 60000);
+
+
+</script>
+
 </body>
 </html>
