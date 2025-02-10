@@ -5,8 +5,6 @@ import webbrowser
 from datetime import datetime
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
-import mpld3
-import os
 import numpy as np
 
 # Zeit abrufen
@@ -60,58 +58,52 @@ with open('/var/www/html/wetter/temperatur.txt', 'a') as f_temp, open('/var/www/
                 humidity = float(ths[1])
                 f_hum.write(f'{humidity:.2f}\n')
 
-
-
-
 # Schließe die serielle Verbindung
 ser.close()
 
-# Lade die Daten aus den Dateien
-temperaturen = np.loadtxt('/var/www/html/wetter/temperatur.txt')
-feuchtigkeiten = np.loadtxt('/var/www/html/wetter/feuchtigkeit.txt')
+# Lade die letzten 100 Werte (oder eine andere Anzahl) aus den Dateien
+temperaturen = np.loadtxt('/var/www/html/wetter/temperatur.txt')[-100:]
+feuchtigkeiten = np.loadtxt('/var/www/html/wetter/feuchtigkeit.txt')[-100:]
 
-
-
+# Filtere ungültige Werte (z.B. zu hohe oder zu niedrige Werte)
+temperaturen = temperaturen[np.logical_and(temperaturen >= -50, temperaturen <= 50)]
+feuchtigkeiten = feuchtigkeiten[np.logical_and(feuchtigkeiten >= 0, feuchtigkeiten <= 100)]
 
 # Diagramm erstellen
-fig, ax1 = plt.subplots()
+fig, ax1 = plt.subplots(figsize=(10, 6))
 
 color = 'tab:red'
-ax1.set_xlabel('Zeit (h)')
-ax1.set_ylabel('Temperatur (°C)', color=color)
-ax1.scatter(range(1, len(temperaturen) + 1)[::60], temperaturen[::60], color=color)  # Plot every 60th value
+ax1.set_xlabel('Zeit (h)', fontsize=12)
+ax1.set_ylabel('Temperatur (°C)', color=color, fontsize=12)
+ax1.plot(range(1, len(temperaturen) + 1), temperaturen, color=color, marker='o', markersize=5)  # Linienplot
 ax1.tick_params(axis='y', labelcolor=color)
+ax1.tick_params(axis='x', labelsize=10)
 
 ax2 = ax1.twinx()
 color = 'tab:blue'
-ax2.set_ylabel('Feuchtigkeit (%)', color=color)
-ax2.scatter(range(1, len(feuchtigkeiten) + 1)[::60], feuchtigkeiten[::60], color=color)  # Plot every 60th value
+ax2.set_ylabel('Feuchtigkeit (%)', color=color, fontsize=12)
+ax2.plot(range(1, len(feuchtigkeiten) + 1), feuchtigkeiten, color=color, marker='o', markersize=5)  # Linienplot
 ax2.tick_params(axis='y', labelcolor=color)
+ax2.tick_params(axis='x', labelsize=10)
 
-# ticker
-
-ax1.xaxis.set_major_locator(ticker.MultipleLocator(1))
-ax2.xaxis.set_major_locator(ticker.MultipleLocator(1))
+# Setze Ticks auf maximal 10 pro Achse
+ax1.xaxis.set_major_locator(ticker.MaxNLocator(10))
+ax2.xaxis.set_major_locator(ticker.MaxNLocator(10))
 
 # Datenquelle hinzufügen
-fig.text(0.5, 0.01, 'Datenquelle: daten.txt', ha='center', va='center')
+fig.text(0.5, 0.01, 'Datenquelle: daten.txt', ha='center', va='center', fontsize=10)
 
-
-
-# Öffne die Textdatei im Lesemodus
-with open('/var/www/html/wetter/daten.txt', 'r') as f:
-    lines = f.readlines()
-
-# Erstelle eine HTML-Tabelle
-html_table = '<table>'
-# Diagramm wird in PNG-Datei Gespeichert
+# Diagramm als PNG speichern
 fig.savefig("/var/www/html/wetter/daten.png")
 
-# HTML-Tag für das Bild erstellen
+# HTML-Tabelle erstellen
+html_table = '<table>'
 img_tag = f'<img src="daten.png" alt="Diagramm">'
-
-# Füge das img_tag zur HTML-Tabelle hinzu
 html_table += img_tag
+
+# Lies die Datei mit den Temperatur- und Feuchtigkeitsdaten
+with open('/var/www/html/wetter/daten.txt', 'r') as f:
+    lines = f.readlines()
 
 for line in lines:
     values = line.strip().split(',')
@@ -120,18 +112,11 @@ for line in lines:
         html_table += f'<tr><td>Temperatur: {temp}°C</td><td>Feuchtigkeit: {humidity}%</td></tr>'
 html_table += '</table>'
 
-# Füge die aktuelle Zeit zur HTML-Tabelle hinzu
+# Aktuelle Zeit zur HTML-Tabelle hinzufügen
 html_table += f'<p>Aktuelle Zeit: {now}</p>'
 
-# Diagramm in HTML umwandeln und speichern
-#html_str = mpld3.fig_to_html(fig)
-
-
-
-# Schreibe die HTML-Tabelle und das Diagramm in eine Datei
+# HTML-Datei speichern
 with open('/var/www/html/wetter/daten.html', 'w') as html_file:
-    #html_file.write(html_str)
     html_file.write(html_table)
 
 print(now)
-# plt.show()

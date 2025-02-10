@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Website Weather</title>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="header.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="menu.css">
+  <link rel="stylesheet" href="https://pyscript.net/releases/2022.09.1/pyscript.css" />
+  <script defer src="https://pyscript.net/releases/2022.09.1/pyscript.js"></script>
+
+  <style>
+    .mySlides {
+      max-height: 500px;
+      object-fit: cover;
+    }
+    body {
+      position: relative;
+      overflow: hidden;
+      background-color: #09090b;
+    }
+    pixel-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    .menu-button {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 9;
+    }
+    .menu.open {
+      opacity: 1;
+      visibility: visible;
+    }
+    .menu a {
+      display: block;
+      padding: 1rem;
+      color: white;
+      text-decoration: none;
+    }
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .weather-data {
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <pixel-canvas data-gap="10" data-speed="25" data-colors="#e0f2fe, #7dd3fc, #0ea5e9" data-no-focus></pixel-canvas>
+
+  <button class="menu-button" onclick="toggleMenu()">☰</button>
+  <div class="menu" id="menu">
+    <a href="index.html">Home</a>
+    <a href="news.html">News</a>
+    <a href="weather.html">Weather</a>
+    <a href="http://192.168.0.19:8081">Nextcloud</a>
+  </div>
+
+  <main class="content">
+    <h1>Willkommen auf der Wetterseite!</h1>
+    <p>Hier finden Sie aktuelle Wetterinformationen.</p>
+    <img src="wetter/daten.png" alt="Wetter" id="bild">
+    <div class="weather-data">
+      <p id="temperatur"></p>
+      <p id="feuchtigkeit"></p>
+      <p id="zeit"></p>
+    </div>
+  </main>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('menu');
+      menu.classList.toggle('open');
+    }
+
+    fetch('wetter/daten.txt?v=' + new Date().getTime())
+      .then(response => response.text())
+      .then(data => {
+        let daten = data.split(',');
+        document.getElementById('temperatur').textContent = 'Temperatur: ' + daten[1] + ' Grad';
+        document.getElementById('feuchtigkeit').textContent = 'Feuchtigkeit: ' + daten[2] + ' %';
+      })
+      .catch(error => console.error(error));
+
+    fetch('wetter/zeit.txt?v=' + new Date().getTime())
+      .then(response => response.text())
+      .then(data => {
+        let daten = data.split(',');
+        document.getElementById('zeit').textContent = 'Zeit: ' + daten[0];
+      })
+      .catch(error => console.error(error));
+
+    function aktualisiereBild() {
+      const bild = document.getElementById('bild');
+      const bildUrl = 'wetter/daten.png?v=' + new Date().getTime();
+      bild.src = bildUrl;
+    }
+
+    setInterval(aktualisiereBild, 60000);
+  </script>
+
+  <py-script>
+    print("Hello World")
+    a = 5 * 5
+    print(a)
+  </py-script>
+  <py-repl>
+    from time import datetime
+    print(datetime.now()) # press shift + enter to run
+  </py-repl>
+
+</body>
+</html>
